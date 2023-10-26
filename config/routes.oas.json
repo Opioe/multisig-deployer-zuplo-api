@@ -10,7 +10,7 @@
         "pathMode": "open-api"
       },
       "post": {
-        "summary": "New Route",
+        "summary": "Deploy",
         "description": "Lorem ipsum dolor sit amet, **consectetur adipiscing** elit, sed do `eiusmod tempor` incididunt ut labore et dolore magna aliqua.",
         "x-zuplo-route": {
           "corsPolicy": "none",
@@ -34,7 +34,7 @@
         "pathMode": "open-api"
       },
       "get": {
-        "summary": "New Route",
+        "summary": "Contract Address",
         "description": "Lorem ipsum dolor sit amet, **consectetur adipiscing** elit, sed do `eiusmod tempor` incididunt ut labore et dolore magna aliqua.",
         "x-zuplo-route": {
           "corsPolicy": "none",
@@ -58,7 +58,7 @@
         "pathMode": "open-api"
       },
       "post": {
-        "summary": "New Route",
+        "summary": "Request Ownership",
         "description": "Lorem ipsum dolor sit amet, **consectetur adipiscing** elit, sed do `eiusmod tempor` incididunt ut labore et dolore magna aliqua.",
         "x-zuplo-route": {
           "corsPolicy": "none",
@@ -75,6 +75,30 @@
           }
         },
         "operationId": "e6df59eb-1345-4f89-be89-5a3435885734"
+      }
+    },
+    "/requestSignerChange": {
+      "x-zuplo-path": {
+        "pathMode": "open-api"
+      },
+      "post": {
+        "summary": "Request Signer Change",
+        "description": "Lorem ipsum dolor sit amet, **consectetur adipiscing** elit, sed do `eiusmod tempor` incididunt ut labore et dolore magna aliqua.",
+        "x-zuplo-route": {
+          "corsPolicy": "none",
+          "handler": {
+            "export": "default",
+            "module": "$import(./modules/requestSignerChange)",
+            "options": {}
+          },
+          "policies": {
+            "inbound": [
+              "api-key-inbound-3",
+              "rate-limit-inbound-3"
+            ]
+          }
+        },
+        "operationId": "0d212cee-1093-4c14-b423-74f7a5cadc71"
       }
     }
   }
