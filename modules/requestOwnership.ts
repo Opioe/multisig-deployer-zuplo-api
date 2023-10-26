@@ -1,10 +1,10 @@
 import { ethers } from "ethers";
 import { ZuploContext, ZuploRequest, environment } from "@zuplo/runtime";
 
-const { WALLET_PRIVATE_KEY, QUICKNODE_API_KEY } = environment;
+const { WALLET_PRIVATE_KEY, QUICKNODE_API_KEY, INFURA_API_KEY } = environment;
 
-const RPCurl = 'https://attentive-convincing-pallet.matic-testnet.quiknode.pro/' + QUICKNODE_API_KEY + '/';
-
+const RPCurl1 = 'https://attentive-convincing-pallet.matic-testnet.quiknode.pro/' + QUICKNODE_API_KEY + '/';
+const RPCurl = 'https://sepolia.infura.io/v3/' + INFURA_API_KEY;
 const provider = new ethers.JsonRpcProvider(RPCurl);
 
 const contractABI = [
@@ -912,7 +912,8 @@ const contractABI = [
 const wallet = new ethers.Wallet(WALLET_PRIVATE_KEY, provider);
 
 export default async function (request: ZuploRequest, context: ZuploContext) {
-  const futureOwner = await request.json().futureOwner;
+  const req = await request.json();
+  const futureOwner = await req.futureOwner;
   if (typeof futureOwner != "string" || futureOwner.length != 42 || futureOwner.slice(0, 2) != "0x") {
     return {
       error: "Invalid argument type or format of futureOwner",
@@ -931,7 +932,7 @@ export default async function (request: ZuploRequest, context: ZuploContext) {
     }
   }
 
-  const contractAddress = await request.json().contractAddress;
+  const contractAddress = await req.contractAddress;
   if (typeof contractAddress != "string" || contractAddress.length != 42 || contractAddress.slice(0, 2) != "0x") {
     return {
       error: "Invalid argument type or format of contractAddress",

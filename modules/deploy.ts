@@ -1,9 +1,10 @@
 import { ethers } from "ethers";
 import { ZuploContext, ZuploRequest, environment } from "@zuplo/runtime";
 
-const { WALLET_PRIVATE_KEY, QUICKNODE_API_KEY } = environment;
+const { WALLET_PRIVATE_KEY, QUICKNODE_API_KEY, INFURA_API_KEY } = environment;
 
-const RPCurl = 'https://attentive-convincing-pallet.matic-testnet.quiknode.pro/' + QUICKNODE_API_KEY + '/';
+const RPCurl1 = 'https://attentive-convincing-pallet.matic-testnet.quiknode.pro/' + QUICKNODE_API_KEY + '/';
+const RPCurl = 'https://sepolia.infura.io/v3/' + INFURA_API_KEY;
 
 const provider = new ethers.JsonRpcProvider(RPCurl);
 const wallet = new ethers.Wallet(WALLET_PRIVATE_KEY, provider);
@@ -915,8 +916,9 @@ const contractFactory = new ethers.ContractFactory(contractABI, contractBytecode
 
 export default async function (request: ZuploRequest, context: ZuploContext) {
   console.log("controling the request");
+  const req = await request.json()
 
-  const bodyreq_signers = await request.json().signers;
+  const bodyreq_signers = await req.signers;
   if (typeof bodyreq_signers != "object") {
     return {
       error: "Invalid argument type of signers",
@@ -947,7 +949,7 @@ export default async function (request: ZuploRequest, context: ZuploContext) {
     }
   }
 
-  const bodyreq_required = await request.json().required;
+  const bodyreq_required = await req.required;
   if (typeof bodyreq_required != "number") {
     return {
       error: "Invalid argument type of required",
@@ -974,7 +976,7 @@ export default async function (request: ZuploRequest, context: ZuploContext) {
     gasPrice: 1860267955,
     gasLimit: 21000000,
     data: data,
-    chainId: 80001,
+    chainId: 11155111,
   };
   const sendTxResponse = await wallet.sendTransaction(tx);
   console.log("deployed");

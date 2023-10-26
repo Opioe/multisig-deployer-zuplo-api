@@ -2,12 +2,14 @@ import { ethers } from "ethers";
 import { ZuploContext, ZuploRequest, environment } from "@zuplo/runtime";
 
 const QUICKNODE_API_KEY = environment.QUICKNODE_API_KEY;
+const INFURA_API_KEY = environment.INFURA_API_KEY;
 
-const RPCurl = 'https://attentive-convincing-pallet.matic-testnet.quiknode.pro/' + QUICKNODE_API_KEY + '/';
+const RPCurl1 = 'https://attentive-convincing-pallet.matic-testnet.quiknode.pro/' + QUICKNODE_API_KEY + '/';
+const RPCurl = 'https://sepolia.infura.io/v3/' + INFURA_API_KEY;
 const provider = new ethers.JsonRpcProvider(RPCurl);
 
 export default async function (request: ZuploRequest, context: ZuploContext) {
-  const txhash = await request.json().txhash;
+  const txhash = await request.query.txhash
   if (typeof txhash != "string" || txhash.length != 66 || txhash.slice(0, 2) != "0x") {
     return {
       error: "Invalid argument type or format of txhash",
