@@ -1,0 +1,10 @@
+{
+  "description": "A simple POST to the initial route",
+  "pathname": "/deploy",
+  "method": "POST",
+  "headers": {
+    "content-type": "application/json",
+    "Authorization": "Bearer"
+  },
+  "body": "{\n    \"signers\" : [\"0x0c49DF4e21909375c220D2Fe6661b32481aCc258\", \"0xdDe7b5B326DE06f01b2aCf08cF38573e74ef5d68\"],\n    \"required\" : 1\n}"
+}

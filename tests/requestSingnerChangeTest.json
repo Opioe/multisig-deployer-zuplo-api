@@ -1,0 +1,10 @@
+{
+  "description": "A simple POST to the initial route",
+  "pathname": "/requestSignerChange",
+  "method": "POST",
+  "headers": {
+    "content-type": "application/json",
+    "Authorization": "Bearer"
+  },
+  "body": "{\n    \"contractAddress\": \"0x9E39a490451db92ffF2801a0fA8eb71d3360220a\",\n    \"oldSigner\": \"0x0c49DF4e21909375c220D2Fe6661b32481aCc258\",\n    \"newSigner\": \"0x07128963Cafd50de0E338b3234ECe7C6D4F100D5\"\n}"
+}

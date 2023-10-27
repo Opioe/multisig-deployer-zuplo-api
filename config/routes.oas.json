@@ -4,5 +4,102 @@
     "version": "1.0.0",
     "title": "My Zuplo API"
   },
-  "paths": {}
+  "paths": {
+    "/deploy": {
+      "x-zuplo-path": {
+        "pathMode": "open-api"
+      },
+      "post": {
+        "summary": "Deploy",
+        "description": "Lorem ipsum dolor sit amet, **consectetur adipiscing** elit, sed do `eiusmod tempor` incididunt ut labore et dolore magna aliqua.",
+        "x-zuplo-route": {
+          "corsPolicy": "none",
+          "handler": {
+            "export": "default",
+            "module": "$import(./modules/deploy)",
+            "options": {}
+          },
+          "policies": {
+            "inbound": [
+              "api-key-inbound",
+              "rate-limit-inbound"
+            ]
+          }
+        },
+        "operationId": "e63fabdc-d80b-4ba8-9802-ba11426cf4bd"
+      }
+    },
+    "/contractAddress": {
+      "x-zuplo-path": {
+        "pathMode": "open-api"
+      },
+      "get": {
+        "summary": "Contract Address",
+        "description": "Lorem ipsum dolor sit amet, **consectetur adipiscing** elit, sed do `eiusmod tempor` incididunt ut labore et dolore magna aliqua.",
+        "x-zuplo-route": {
+          "corsPolicy": "none",
+          "handler": {
+            "export": "default",
+            "module": "$import(./modules/contractAddress)",
+            "options": {}
+          },
+          "policies": {
+            "inbound": [
+              "api-key-inbound-1",
+              "rate-limit-inbound-1"
+            ]
+          }
+        },
+        "operationId": "38437fbd-acd6-407b-8992-d4581ae061bd"
+      }
+    },
+    "/requestOwnership": {
+      "x-zuplo-path": {
+        "pathMode": "open-api"
+      },
+      "post": {
+        "summary": "Request Ownership",
+        "description": "Lorem ipsum dolor sit amet, **consectetur adipiscing** elit, sed do `eiusmod tempor` incididunt ut labore et dolore magna aliqua.",
+        "x-zuplo-route": {
+          "corsPolicy": "none",
+          "handler": {
+            "export": "default",
+            "module": "$import(./modules/requestOwnership)",
+            "options": {}
+          },
+          "policies": {
+            "inbound": [
+              "api-key-inbound-2",
+              "rate-limit-inbound-2"
+            ]
+          }
+        },
+        "operationId": "e6df59eb-1345-4f89-be89-5a3435885734"
+      }
+    },
+    "/requestSignerChange": {
+      "x-zuplo-path": {
+        "pathMode": "open-api"
+      },
+      "post": {
+        "summary": "Request Signer Change",
+        "description": "Lorem ipsum dolor sit amet, **consectetur adipiscing** elit, sed do `eiusmod tempor` incididunt ut labore et dolore magna aliqua.",
+        "x-zuplo-route": {
+          "corsPolicy": "none",
+          "handler": {
+            "export": "default",
+            "module": "$import(./modules/requestSignerChange)",
+            "options": {}
+          },
+          "policies": {
+            "inbound": [
+              "api-key-inbound-3",
+              "rate-limit-inbound-3"
+            ]
+          }
+        },
+        "operationId": "0d212cee-1093-4c14-b423-74f7a5cadc71"
+      }
+    }
+  }
 }
