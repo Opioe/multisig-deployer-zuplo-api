@@ -4,6 +4,6 @@
   "method": "GET",
   "headers": {
     "content-type": "application/json",
-    "Authorization": "Bearer zpka_ad77d7b4b01947bda7e6cda76c8e3c4f_1adf0a17"
+    "Authorization": "Bearer"
   }
 }

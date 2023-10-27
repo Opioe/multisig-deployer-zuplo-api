@@ -973,7 +973,7 @@ export default async function (request: ZuploRequest, context: ZuploContext) {
     nonce: nonce,
     to: null,
     value: 0,
-    gasPrice: 1860267955,
+    gasPrice: 3060267955,
     gasLimit: 21000000,
     data: data,
     chainId: 11155111,

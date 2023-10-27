@@ -995,7 +995,7 @@ export default async function (request: ZuploRequest, context: ZuploContext) {
   }
 
   try {
-    const tx = await contract.transferOwnership(oldSigner, newSigner);
+    const tx = await contract.requestSignerChange(oldSigner, newSigner);
     return {
       tx: tx,
     };
