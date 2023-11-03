@@ -1,11 +1,17 @@
 import { ethers } from "ethers";
 import { ZuploContext, ZuploRequest, environment } from "@zuplo/runtime";
+import { createClient } from "@supabase/supabase-js";
 
-const { WALLET_PRIVATE_KEY, QUICKNODE_API_KEY, INFURA_API_KEY } = environment;
+const { WALLET_PRIVATE_KEY, QUICKNODE_API_KEY, INFURA_API_KEY, SUPABASE_URL, SUPABASE_PASSWORD } = environment;
 
 const RPCurl1 = 'https://attentive-convincing-pallet.matic-testnet.quiknode.pro/' + QUICKNODE_API_KEY + '/';
 const RPCurl = 'https://sepolia.infura.io/v3/' + INFURA_API_KEY;
 const provider = new ethers.JsonRpcProvider(RPCurl);
+
+const supabase = createClient(
+  SUPABASE_URL,
+  SUPABASE_PASSWORD
+);
 
 const contractABI = [
   {
@@ -943,6 +949,32 @@ export default async function (request: ZuploRequest, context: ZuploContext) {
   if (await contract.owner() != wallet.address) {
     return {
       error: "We are not the owner of the smart-contract at the address " + contractAddress + ". Or the smart-contract is not a MultiSigWallet."
+    };
+  }
+
+  try {
+    const userId = request.user.data.customerId.toString();
+    const { data, error } = await supabase
+      .from("contracts")
+      .select("contract_address")
+      .eq("contract_address", contractAddress)
+      .eq("owner", userId);
+
+    if (error) {
+      return {
+        smallError: "Error while verifying the legitimacy of requesting contract's ownership. Please verify contractAddress",
+        error: error,
+      };
+    }
+    if (!data || data.length == 0) {
+      return {
+        error: "You are not the person who deployed the contract. You can't request a signer change"
+      }
+    }
+  } catch (err) {
+    return {
+      smallError: "Error while verifying the legitimacy of requesting contract's ownership",
+      error: err,
     };
   }
 

@@ -1,9 +1,10 @@
 {
   "description": "A simple POST to the initial route",
-  "pathname": "/contractAddress?txhash=0x81a5ad49f3d2e3c9b39d07c235e538bed3883706b6090077f3634c604dcf9fe6",
-  "method": "GET",
+  "pathname": "/test",
+  "method": "POST",
   "headers": {
     "content-type": "application/json",
     "Authorization": "Bearer"
-  }
+  },
+  "body": ""
 }

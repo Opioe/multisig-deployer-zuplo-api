@@ -1,12 +1,17 @@
 import { ethers } from "ethers";
 import { ZuploContext, ZuploRequest, environment } from "@zuplo/runtime";
+import { createClient } from "@supabase/supabase-js";
 
-const QUICKNODE_API_KEY = environment.QUICKNODE_API_KEY;
-const INFURA_API_KEY = environment.INFURA_API_KEY;
+const { QUICKNODE_API_KEY, INFURA_API_KEY, SUPABASE_URL, SUPABASE_PASSWORD } = environment;
 
 const RPCurl1 = 'https://attentive-convincing-pallet.matic-testnet.quiknode.pro/' + QUICKNODE_API_KEY + '/';
 const RPCurl = 'https://sepolia.infura.io/v3/' + INFURA_API_KEY;
 const provider = new ethers.JsonRpcProvider(RPCurl);
+
+const supabase = createClient(
+  SUPABASE_URL,
+  SUPABASE_PASSWORD
+);
 
 export default async function (request: ZuploRequest, context: ZuploContext) {
   const txhash = await request.query.txhash
@@ -29,10 +34,34 @@ export default async function (request: ZuploRequest, context: ZuploContext) {
   }
 
   try {
+    const { data, error } = await supabase
+      .from("contracts")
+      .select("creation_hash")
+      .eq("creation_hash", txhash);
+    if (error) {
+      return {
+        smallError: "Error while inserting the contract's data in the database",
+        error: error,
+      };
+    }
+
+    if (!data || data.length == 0) {
+      return {
+        error: "The transaction hash doesn't correspond to a MultiSigWallet deployed with the API"
+      }
+    }
+  } catch (err) {
+    return {
+      smallError: "Error while inserting the contract's data in the database",
+      error: err,
+    };
+  }
+
+  try {
     const tx = await provider.getTransaction(txhash);
     if (tx == null) {
       return {
-        error: "Transaction not found or not mined yet",
+        error: "Transaction not mined yet",
       };
     }
   } catch (error) {
@@ -46,9 +75,27 @@ export default async function (request: ZuploRequest, context: ZuploContext) {
     const receipt = await provider.getTransactionReceipt(txhash);
 
     if (receipt.contractAddress) {
+      const { data, error } = await supabase
+        .from("contracts")
+        .upsert(
+          [
+            {
+              creation_hash: txhash,
+              contract_address: receipt.contractAddress,
+            }
+          ],
+          { onConflict: ["creation_hash"], returning: ["contract_address"] }
+        );
+
+      if (error) {
+        return {
+          smallError: "Error while inserting the contract's data in the database",
+          error: error
+        };
+      }
       return {
         contractAddress: receipt.contractAddress,
-      };
+      }
     } else {
       return {
         error: "No contract address found for this transaction, please verify that the transaction corresponds to a contract deployment",
