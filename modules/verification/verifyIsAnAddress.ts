@@ -1,4 +1,4 @@
-async function _verifyIsAnAddress(address, errorName = "address") {
+async function verifyIsAnAddress(address, errorName = "address") {
     if (typeof address != "string" || address.length != 42 || address.slice(0, 2) != "0x") {
       return {
         error: "Invalid argument type or format of " + errorName,
@@ -18,4 +18,4 @@ async function _verifyIsAnAddress(address, errorName = "address") {
     }
 }
 
-export default _verifyIsAnAddress;
+export default verifyIsAnAddress;

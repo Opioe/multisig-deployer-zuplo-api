@@ -921,31 +921,34 @@ const contractABI = [
 const contractFactory = new ethers.ContractFactory(contractABI, contractBytecode, wallet);
 
 export default async function (request: ZuploRequest, context: ZuploContext) {
-  const req = await request.json()
+  const { signers, required } = await request.body; 
 
-  const bodyreq_signers = await req.signers;
-  if (typeof bodyreq_signers != "object") {
+  if (typeof signers != "object") {
     return {
+      statusCode: 400,
       error: "Invalid argument type of signers",
     };
   }
-  if (bodyreq_signers.length < 2 || bodyreq_signers.length > 10) {
+  if (signers.length < 2 || signers.length > 10) {
     return {
+      statusCode: 400,
       error: "Invalid number of signers, expected between 2 and 10",
     };
   }
-  for (let i = 0; i < bodyreq_signers.length; i++) {
-    if (typeof bodyreq_signers[i] != "string" || bodyreq_signers[i].length != 42 || bodyreq_signers[i].slice(0, 2) != "0x") {
+  for (let i = 0; i < signers.length; i++) {
+    if (typeof signers[i] != "string" || signers[i].length != 42 || signers[i].slice(0, 2) != "0x") {
       return {
-        error: "Invalid argument type of signers at index " + i + " (current argument at index " + i + " : \'" + bodyreq_signers[i] + "\')",
+        statusCode: 400,
+        error: "Invalid argument type of signers at index " + i + " (current argument at index " + i + " : \'" + signers[i] + "\')",
       };
     } else {
       for (let j = 2; j < 42; j++) {
-        if (bodyreq_signers[i][j] < "0" || bodyreq_signers[i][j] > "9") {
-          if (bodyreq_signers[i][j] < "A" || bodyreq_signers[i][j] > "F") {
-            if (bodyreq_signers[i][j] < "a" || bodyreq_signers[i][j] > "f") {
+        if (signers[i][j] < "0" || signers[i][j] > "9") {
+          if (signers[i][j] < "A" || signers[i][j] > "F") {
+            if (signers[i][j] < "a" || signers[i][j] > "f") {
               return {
-                error: "Invalid character at index " + j + " of signers at index " + i + " (current character at index " + j + " : \'" + bodyreq_signers[i][j] + "\')",
+                statusCode: 400,
+                error: "Invalid character at index " + j + " of signers at index " + i + " (current character at index " + j + " : \'" + signers[i][j] + "\')",
               };
             }
           }
@@ -954,21 +957,22 @@ export default async function (request: ZuploRequest, context: ZuploContext) {
     }
   }
 
-  const bodyreq_required = await req.required;
-  if (typeof bodyreq_required != "number") {
+  if (typeof required != "number") {
     return {
+      statusCode: 400,
       error: "Invalid argument type of required",
     };
   }
-  if (bodyreq_required < 1 || bodyreq_required > bodyreq_signers.length) {
+  if (required < 1 || required > signers.length) {
     return {
-      error: "Invalid number of required, expected between 1 and the number of signers (in your request : " + bodyreq_signers.length + " signers)",
+      statusCode: 400,
+      error: "Invalid number of required, expected between 1 and the number of signers (in your request : " + signers.length + " signers)",
     };
   }
 
   const nonce = await wallet.getNonce();
 
-  const constructorArgs = [bodyreq_signers, bodyreq_required];
+  const constructorArgs = [signers, required];
   const encodeConstructorArgs = contractFactory.interface.encodeDeploy(constructorArgs);
   const contractData = contractBytecode + encodeConstructorArgs.slice(2);
 
@@ -993,19 +997,21 @@ export default async function (request: ZuploRequest, context: ZuploContext) {
       ])
     if (error) {
       return {
+        statusCode: 503,
         smallError: "Error while inserting the contract's data in the database",
         error: error,
       };
     }
   } catch (err) {
     return {
+      statusCode: 503,
       smallError: "Error while inserting the contract's data in the database",
       error: err,
     };
   }
 
-
   return {
+    statusCode: 200,
     success: "Transaction sent successfully",
     sendTxResponse: sendTxResponse.hash,
     network: network,

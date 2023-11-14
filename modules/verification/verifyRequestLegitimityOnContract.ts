@@ -8,7 +8,7 @@ const supabase = createClient(
   SUPABASE_PASSWORD
 );
 
-async function _verifyRequestLegitimityOnContract(contractAddress, userId) {
+async function verifyRequestLegitimityOnContract(contractAddress, userId) {
     if (typeof contractAddress != "string" || contractAddress.length != 42 || contractAddress.slice(0, 2) != "0x") {
     return {
         error: "Invalid argument type or format of contractAddress",
@@ -54,4 +54,4 @@ async function _verifyRequestLegitimityOnContract(contractAddress, userId) {
 }
 
 // export la function main
-export default _verifyRequestLegitimityOnContract;
+export default verifyRequestLegitimityOnContract;

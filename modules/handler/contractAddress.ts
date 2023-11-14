@@ -17,6 +17,7 @@ export default async function (request: ZuploRequest, context: ZuploContext) {
   const txhash = await request.query.txhash
   if (typeof txhash != "string" || txhash.length != 66 || txhash.slice(0, 2) != "0x") {
     return {
+      statusCode: 400,
       error: "Invalid argument type or format of txhash",
     };
   } else {
@@ -25,6 +26,7 @@ export default async function (request: ZuploRequest, context: ZuploContext) {
         if (txhash[i] < "A" || txhash[i] > "F") {
           if (txhash[i] < "a" || txhash[i] > "f") {
             return {
+              statusCode: 400,
               error: "Invalid character at index " + i + " of txhash (current character at index " + i + " : \'" + txhash[i] + "\')",
             };
           }
@@ -40,6 +42,7 @@ export default async function (request: ZuploRequest, context: ZuploContext) {
       .eq("creation_hash", txhash);
     if (error) {
       return {
+        statusCode: 503,
         smallError: "Error while inserting the contract's data in the database",
         error: error,
       };
@@ -47,11 +50,13 @@ export default async function (request: ZuploRequest, context: ZuploContext) {
 
     if (!data || data.length == 0) {
       return {
+        statusCode: 404,
         error: "The transaction hash doesn't correspond to a MultiSigWallet deployed with the API"
       }
     }
   } catch (err) {
     return {
+      statusCode: 503,
       smallError: "Error while inserting the contract's data in the database",
       error: err,
     };
@@ -61,11 +66,13 @@ export default async function (request: ZuploRequest, context: ZuploContext) {
     const tx = await provider.getTransaction(txhash);
     if (tx == null) {
       return {
+        statusCode: 404,
         error: "Transaction not mined yet",
       };
     }
   } catch (error) {
     return {
+      statusCode: 400,
       error: "Invalid txhash",
       errorMessage: error.message,
     };
@@ -75,7 +82,7 @@ export default async function (request: ZuploRequest, context: ZuploContext) {
     const receipt = await provider.getTransactionReceipt(txhash);
 
     if (receipt.contractAddress) {
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from("contracts")
         .upsert(
           [
@@ -89,20 +96,24 @@ export default async function (request: ZuploRequest, context: ZuploContext) {
 
       if (error) {
         return {
+          statusCode: 503,
           smallError: "Error while inserting the contract's data in the database",
           error: error
         };
       }
       return {
+        statusCode: 200,
         contractAddress: receipt.contractAddress,
       }
     } else {
       return {
+        statusCode: 404,
         error: "No contract address found for this transaction, please verify that the transaction corresponds to a contract deployment",
       };
     }
   } catch (error) {
     return {
+      statusCode: 404,
       error: "Transaction not found or not mined yet",
       errorMessage: error.message,
     };
