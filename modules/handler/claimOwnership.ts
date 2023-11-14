@@ -1,7 +1,6 @@
 import { ethers } from "ethers";
 import { ZuploContext, ZuploRequest, environment } from "@zuplo/runtime";
-import _verifyIsAnAddress from "./_verifyIsAnAddress";
-import _verifyRequestLegitimityOnContract from "./_verifyRequestLegitimityOnContract";
+import verifyRequestLegitimityOnContract from "../verification/verifyRequestLegitimityOnContract";
 
 const { QUICKNODE_API_KEY, INFURA_API_KEY } = environment;
 
@@ -21,7 +20,7 @@ const contractABI = [
 
 export default async function (request: ZuploRequest, context: ZuploContext) {
     const { contractAddress } = request.body;
-    _verifyRequestLegitimityOnContract(contractAddress, request.user.data.customerId.toString());
+    verifyRequestLegitimityOnContract(contractAddress, request.user.data.customerId.toString());
 
     const contract = new ethers.Contract(contractAddress, contractABI, provider);
 

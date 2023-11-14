@@ -1,8 +1,8 @@
 import { ethers } from "ethers";
 import { ZuploContext, ZuploRequest, environment } from "@zuplo/runtime";
 import { createClient } from "@supabase/supabase-js";
-const _verifyRequestLegitimityOnContract = require("./_verifyRequestLegitimityOnContract");
-const _verifyIsAnAddress = require("./_verifyIsAnAddress");
+const verifyRequestLegitimityOnContract = require("../verification/verifyRequestLegitimityOnContract");
+const verifyIsAnAddress = require("../verification/verifyIsAnAddress");
 
 const { WALLET_PRIVATE_KEY, QUICKNODE_API_KEY, INFURA_API_KEY, SUPABASE_URL, SUPABASE_PASSWORD } = environment;
 
@@ -72,8 +72,8 @@ const contractABI = [
 export default async function (request: ZuploRequest, context: ZuploContext) {
     var { destination, token, tokenStandard, tokenId, value, data, confirmTimestamp, contractAddress } = request.body;
 
-    _verifyRequestLegitimityOnContract(contractAddress, request.user.data.customerId.toString());
-    _verifyIsAnAddress(destination, "destination address");
+    verifyRequestLegitimityOnContract(contractAddress, request.user.data.customerId.toString());
+    verifyIsAnAddress(destination, "destination address");
 
     if (typeof tokenStandard != "number" || tokenStandard < 0 || tokenStandard > 3) {
         return {
@@ -88,10 +88,10 @@ export default async function (request: ZuploRequest, context: ZuploContext) {
         tokenId = 0;
         token = "0x0000000000000000000000000000000000000000";
     } else if (tokenStandard == 0) {
-        _verifyIsAnAddress(token, "token address");
+        verifyIsAnAddress(token, "token address");
         tokenId = 0;
     } else {
-        _verifyIsAnAddress(token, "token address");
+        verifyIsAnAddress(token, "token address");
         if (typeof tokenId != "number" || tokenId < 0) {
             return {
                 statusCode: 400,
