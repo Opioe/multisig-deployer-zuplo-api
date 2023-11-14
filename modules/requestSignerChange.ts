@@ -1,8 +1,8 @@
 import { ethers } from "ethers";
 import { ZuploContext, ZuploRequest, environment } from "@zuplo/runtime";
 import { createClient } from "@supabase/supabase-js";
-import verifyRequestLegitimityOnContract from "../verification/verifyRequestLegitimityOnContract";
-import verifyIsAnAddress from "modules/verification/verifyIsAnAddress";
+import verifyRequestLegitimityOnContract from "./verification/verifyRequestLegitimityOnContract";
+import verifyIsAnAddress from "./verification/verifyIsAnAddress";
 
 const { WALLET_PRIVATE_KEY, QUICKNODE_API_KEY, INFURA_API_KEY, SUPABASE_URL, SUPABASE_PASSWORD } = environment;
 

@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 import { ZuploContext, ZuploRequest, environment } from "@zuplo/runtime";
-import verifyRequestLegitimityOnContract from "../verification/verifyRequestLegitimityOnContract";
+import verifyRequestLegitimityOnContract from "./verification/verifyRequestLegitimityOnContract";
 
 const { QUICKNODE_API_KEY, INFURA_API_KEY } = environment;
 
