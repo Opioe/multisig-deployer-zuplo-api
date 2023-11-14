@@ -19,7 +19,7 @@ const contractABI = [
   ];
 
 export default async function (request: ZuploRequest, context: ZuploContext) {
-    const { contractAddress } = request.body;
+    const { contractAddress } = request.query.contractAddress;
     verifyRequestLegitimityOnContract(contractAddress, request.user.data.customerId.toString());
 
     const contract = new ethers.Contract(contractAddress, contractABI, provider);
