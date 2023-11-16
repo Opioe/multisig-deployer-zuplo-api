@@ -1,15 +1,11 @@
 import { ethers } from "ethers";
 import { ZuploContext, ZuploRequest, environment } from "@zuplo/runtime";
 import { createClient } from "@supabase/supabase-js";
+import verifyNetwork from "./verification/verifyNetwork";
+import getRpcURL from "./verification/getRpcURL";
+import getChainId from "./verification/getChainId";
 
-const { WALLET_PRIVATE_KEY, QUICKNODE_API_KEY, INFURA_API_KEY, SUPABASE_PASSWORD, SUPABASE_URL } = environment;
-
-const RPCurl1 = 'https://attentive-convincing-pallet.matic-testnet.quiknode.pro/' + QUICKNODE_API_KEY + '/';
-const RPCurl = 'https://sepolia.infura.io/v3/' + INFURA_API_KEY;
-
-const provider = new ethers.JsonRpcProvider(RPCurl);
-const wallet = new ethers.Wallet(WALLET_PRIVATE_KEY, provider);
-
+const { WALLET_PRIVATE_KEY, SUPABASE_PASSWORD, SUPABASE_URL } = environment;
 const supabase = createClient(
   SUPABASE_URL,
   SUPABASE_PASSWORD
@@ -918,10 +914,8 @@ const contractABI = [
   }
 ];
 
-const contractFactory = new ethers.ContractFactory(contractABI, contractBytecode, wallet);
-
 export default async function (request: ZuploRequest, context: ZuploContext) {
-  const { signers, required } = await request.body; 
+  const { signers, required, network } = await request.body; 
 
   if (typeof signers != "object") {
     return {
@@ -970,6 +964,14 @@ export default async function (request: ZuploRequest, context: ZuploContext) {
     };
   }
 
+  await verifyNetwork(network);
+  const rpcUrl = await getRpcURL(network);
+  const chainId = await getChainId(network);
+
+  const provider = new ethers.providers.JsonRpcProvider(rpcUrl);
+  const wallet = new ethers.Wallet(WALLET_PRIVATE_KEY, provider);
+  const contractFactory = new ethers.ContractFactory(contractABI, contractBytecode, wallet);
+
   const nonce = await wallet.getNonce();
 
   const constructorArgs = [signers, required];
@@ -983,17 +985,16 @@ export default async function (request: ZuploRequest, context: ZuploContext) {
     gasPrice: 2860267955,
     gasLimit: 21000000,
     data: contractData,
-    chainId: 11155111,
+    chainId: chainId,
   };
   const sendTxResponse = await wallet.sendTransaction(tx);
 
-  const network = await provider.getNetwork();
 
   try {
     const { error } = await supabase
       .from("contracts")
       .insert([
-        { creation_hash: sendTxResponse.hash.toString(), network: network.name.toString(), chain_id: network.chainId.toString(), owner: request.user.data.customerId.toString() }
+        { creation_hash: sendTxResponse.hash.toString(), network: network, chain_id: chainId, owner: request.user.data.customerId.toString() }
       ])
     if (error) {
       return {
@@ -1015,5 +1016,6 @@ export default async function (request: ZuploRequest, context: ZuploContext) {
     success: "Transaction sent successfully",
     sendTxResponse: sendTxResponse.hash,
     network: network,
+    chainId: chainId,
   };
 };

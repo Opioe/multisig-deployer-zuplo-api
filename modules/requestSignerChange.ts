@@ -3,12 +3,11 @@ import { ZuploContext, ZuploRequest, environment } from "@zuplo/runtime";
 import { createClient } from "@supabase/supabase-js";
 import verifyRequestLegitimityOnContract from "./verification/verifyRequestLegitimityOnContract";
 import verifyIsAnAddress from "./verification/verifyIsAnAddress";
+import verifyNetwork from "./verification/verifyNetwork";
+import getRpcURL from "./verification/getRpcURL";
 
-const { WALLET_PRIVATE_KEY, QUICKNODE_API_KEY, INFURA_API_KEY, SUPABASE_URL, SUPABASE_PASSWORD } = environment;
+const { WALLET_PRIVATE_KEY, SUPABASE_URL, SUPABASE_PASSWORD } = environment;
 
-const RPCurl1 = 'https://attentive-convincing-pallet.matic-testnet.quiknode.pro/' + QUICKNODE_API_KEY + '/';
-const RPCurl = 'https://sepolia.infura.io/v3/' + INFURA_API_KEY;
-const provider = new ethers.JsonRpcProvider(RPCurl);
 
 const supabase = createClient(
   SUPABASE_URL,
@@ -39,11 +38,16 @@ const contractABI = [
 const wallet = new ethers.Wallet(WALLET_PRIVATE_KEY, provider);
 
 export default async function (request: ZuploRequest, context: ZuploContext) {
-  const { contractAddress, oldSigner, newSigner } = await request.body;
+  const { contractAddress, oldSigner, newSigner, network } = await request.body;
 
   verifyRequestLegitimityOnContract(contractAddress, request.user.data.customerId.toString());
 
+  await verifyNetwork(network);
+  const rpcUrl = await getRpcURL(network)
+  const provider = new ethers.JsonRpcProvider(rpcUrl);
+  const wallet = new ethers.Wallet(WALLET_PRIVATE_KEY, provider);
   const contract = new ethers.Contract(contractAddress, contractABI, wallet);
+  
   try {
     await contract.owner();
   } catch (error) {

@@ -1,12 +1,10 @@
 import { ethers } from "ethers";
 import { ZuploContext, ZuploRequest, environment } from "@zuplo/runtime";
 import { createClient } from "@supabase/supabase-js";
+import verifyNetwork from "./verification/verifyNetwork";
+import getRpcURL from "./verification/getRpcURL";
 
-const { QUICKNODE_API_KEY, INFURA_API_KEY, SUPABASE_URL, SUPABASE_PASSWORD } = environment;
-
-const RPCurl1 = 'https://attentive-convincing-pallet.matic-testnet.quiknode.pro/' + QUICKNODE_API_KEY + '/';
-const RPCurl = 'https://sepolia.infura.io/v3/' + INFURA_API_KEY;
-const provider = new ethers.JsonRpcProvider(RPCurl);
+const { SUPABASE_URL, SUPABASE_PASSWORD } = environment;
 
 const supabase = createClient(
   SUPABASE_URL,
@@ -61,6 +59,11 @@ export default async function (request: ZuploRequest, context: ZuploContext) {
       error: err,
     };
   }
+
+  const network = await request.query.network
+  await verifyNetwork(network);
+  const rpcUrl = await getRpcURL(network)
+  const provider = new ethers.JsonRpcProvider(rpcUrl);
 
   try {
     const tx = await provider.getTransaction(txhash);

@@ -1,17 +1,12 @@
 import { ethers } from "ethers";
 import { ZuploContext, ZuploRequest, environment } from "@zuplo/runtime";
 import { createClient } from "@supabase/supabase-js";
+import verifyNetwork from "./verification/verifyNetwork";
+import getRpcURL from "./verification/getRpcURL";
 const verifyRequestLegitimityOnContract = require("./verification/verifyRequestLegitimityOnContract");
 const verifyIsAnAddress = require("./verification/verifyIsAnAddress");
 
-const { WALLET_PRIVATE_KEY, QUICKNODE_API_KEY, INFURA_API_KEY, SUPABASE_URL, SUPABASE_PASSWORD } = environment;
-
-const RPCurl1 = 'https://attentive-convincing-pallet.matic-testnet.quiknode.pro/' + QUICKNODE_API_KEY + '/';
-const RPCurl = 'https://sepolia.infura.io/v3/' + INFURA_API_KEY;
-
-const provider = new ethers.JsonRpcProvider(RPCurl);
-const wallet = new ethers.Wallet(WALLET_PRIVATE_KEY, provider);
-
+const { WALLET_PRIVATE_KEY, SUPABASE_URL, SUPABASE_PASSWORD } = environment;
 const supabase = createClient(
     SUPABASE_URL || "",
     SUPABASE_PASSWORD || ""
@@ -70,7 +65,7 @@ const contractABI = [
   ];
 
 export default async function (request: ZuploRequest, context: ZuploContext) {
-    var { destination, token, tokenStandard, tokenId, value, data, confirmTimestamp, contractAddress } = request.body;
+    var { destination, token, tokenStandard, tokenId, value, data, confirmTimestamp, contractAddress, network } = request.body;
 
     verifyRequestLegitimityOnContract(contractAddress, request.user.data.customerId.toString());
     verifyIsAnAddress(destination, "destination address");
@@ -146,6 +141,11 @@ export default async function (request: ZuploRequest, context: ZuploContext) {
         };
     }
 
+
+    await verifyNetwork(network);
+    const rpcUrl = await getRpcURL(network)
+    const provider = new ethers.JsonRpcProvider(rpcUrl);
+    const wallet = new ethers.Wallet(WALLET_PRIVATE_KEY, provider);
     const contract = new ethers.Contract(contractAddress, contractABI, wallet);
 
     const transaction = await contract.submitTransactionByOwner(destination, token, tokenStandard, tokenId, value, data, confirmTimestamp);
