@@ -8,6 +8,8 @@
     "test": "zup test"
   },
   "dependencies": {
+    "ethers": "^6.8.1",
+    "ts-node": "^10.9.1",
     "zuplo": "latest"
   }
 }
