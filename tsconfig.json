@@ -17,6 +17,7 @@
     "declaration": true,
     "declarationMap": true,
     "strictNullChecks": true,
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    "resolveJsonModule": true,
   }
 }
