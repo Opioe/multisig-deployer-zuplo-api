@@ -101,29 +101,6 @@
         "operationId": "0d212cee-1093-4c14-b423-74f7a5cadc71"
       }
     },
-    "/test": {
-      "x-zuplo-path": {
-        "pathMode": "open-api"
-      },
-      "post": {
-        "summary": "New Route",
-        "description": "Lorem ipsum dolor sit amet, **consectetur adipiscing** elit, sed do `eiusmod tempor` incididunt ut labore et dolore magna aliqua.",
-        "x-zuplo-route": {
-          "corsPolicy": "none",
-          "handler": {
-            "export": "default",
-            "module": "$import(./modules/teste)",
-            "options": {}
-          },
-          "policies": {
-            "inbound": [
-              "api-key-inbound-4"
-            ]
-          }
-        },
-        "operationId": "73911304-9f3b-40eb-afa4-85b853fe812a"
-      }
-    },
     "/submitTransaction": {
       "x-zuplo-path": {
         "pathMode": "open-api"
@@ -153,7 +130,7 @@
         "pathMode": "open-api"
       },
       "get": {
-        "summary": "New Route",
+        "summary": "Claim Ownership",
         "description": "Lorem ipsum dolor sit amet, **consectetur adipiscing** elit, sed do `eiusmod tempor` incididunt ut labore et dolore magna aliqua.",
         "x-zuplo-route": {
           "corsPolicy": "none",

@@ -8,7 +8,6 @@ import getRpcURL from "./verification/getRpcURL";
 
 const { WALLET_PRIVATE_KEY, SUPABASE_URL, SUPABASE_PASSWORD } = environment;
 
-
 const supabase = createClient(
   SUPABASE_URL,
   SUPABASE_PASSWORD
@@ -35,8 +34,6 @@ const contractABI = [
   }
 ];
 
-const wallet = new ethers.Wallet(WALLET_PRIVATE_KEY, provider);
-
 export default async function (request: ZuploRequest, context: ZuploContext) {
   const { contractAddress, oldSigner, newSigner, network } = await request.body;
 
@@ -47,7 +44,7 @@ export default async function (request: ZuploRequest, context: ZuploContext) {
   const provider = new ethers.JsonRpcProvider(rpcUrl);
   const wallet = new ethers.Wallet(WALLET_PRIVATE_KEY, provider);
   const contract = new ethers.Contract(contractAddress, contractABI, wallet);
-  
+
   try {
     await contract.owner();
   } catch (error) {
