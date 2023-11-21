@@ -94,7 +94,6 @@ export default async function (request: ZuploRequest, context: ZuploContext) {
               contract_address: receipt.contractAddress,
             }
           ],
-          { onConflict: ["creation_hash"], returning: ["contract_address"] }
         );
 
       if (error) {
