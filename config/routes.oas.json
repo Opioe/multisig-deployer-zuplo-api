@@ -148,6 +148,30 @@
         },
         "operationId": "ce5c7621-ac5b-4e19-b170-b883d224f136"
       }
+    },
+    "/get-multisig": {
+      "x-zuplo-path": {
+        "pathMode": "open-api"
+      },
+      "get": {
+        "summary": "get-multisig",
+        "description": "Lorem ipsum dolor sit amet, **consectetur adipiscing** elit, sed do `eiusmod tempor` incididunt ut labore et dolore magna aliqua.",
+        "x-zuplo-route": {
+          "corsPolicy": "none",
+          "handler": {
+            "export": "default",
+            "module": "$import(./modules/getMultisig)",
+            "options": {}
+          },
+          "policies": {
+            "inbound": [
+              "api-key-inbound",
+              "rate-limit-inbound"
+            ]
+          }
+        },
+        "operationId": "e63fabdc-d80b-4ba8-9802-ba11426cf4bd"
+      }
     }
   }
 }
