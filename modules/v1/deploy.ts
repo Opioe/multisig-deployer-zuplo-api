@@ -6,16 +6,9 @@ import getRpcURL from "../verification/getRpcURL";
 import getChainId from "../verification/getChainId";
 import { MultisigData } from "../../const/multisig";
 import { BeaconProxyData } from "../../const/beaconProxy";
+import { proxyAddress } from "../../const/proxyAddress";
 
 const { WALLET_PRIVATE_KEY, SUPABASE_PASSWORD, SUPABASE_URL } = environment;
-
-const addresses = {
-  1: "0x810664F26F408B698831f5fcdA540a8Bd475Cc0c",
-  56: "0xc0ff4C73FfDc597d9aB7EF95a855001715483363",
-  43114: "0x17DBEfC6F36E47BA8d478122B953e8A50bFB4908",
-  1101: "0x17DBEfC6F36E47BA8d478122B953e8A50bFB4908",
-  11155111: "0xa7F10549D73Da73E17DbCe3aa4587b6Bb968C900"
-}
 
 const supabase = createClient(
   SUPABASE_URL,
@@ -74,7 +67,7 @@ export default async function (request: ZuploRequest, context: ZuploContext) {
 
   const constructorArgs = [signers, required];
   const multisigArgsData = contractFactory.interface.encodeFunctionData("initialize", constructorArgs);
-  const beaconProxyData = beaconFactory.interface.encodeDeploy([addresses[chainId], multisigArgsData]);
+  const beaconProxyData = beaconFactory.interface.encodeDeploy([proxyAddress[chainId], multisigArgsData]);
   const data = ethers.concat([beaconFactory.bytecode, beaconProxyData]);
 
   const tx = {
