@@ -1,11 +1,11 @@
 import { ethers } from "ethers";
 import { ZuploContext, ZuploRequest, environment } from "@zuplo/runtime";
 import { createClient } from "@supabase/supabase-js";
-import verifyRequestLegitimityOnContract from "./verification/verifyRequestLegitimityOnContract";
-import verifyIsAnAddress from "./verification/verifyIsAnAddress";
-import verifyNetwork from "./verification/verifyNetwork";
-import getRpcURL from "./verification/getRpcURL";
-import { MultisigData } from "../const/multisig";
+import verifyRequestLegitimityOnContract from "../verification/verifyRequestLegitimityOnContract";
+import verifyIsAnAddress from "../verification/verifyIsAnAddress";
+import verifyNetwork from "../verification/verifyNetwork";
+import getRpcURL from "../verification/getRpcURL";
+import { MultisigData } from "../../const/multisig";
 
 
 const { WALLET_PRIVATE_KEY, SUPABASE_URL, SUPABASE_PASSWORD } = environment;

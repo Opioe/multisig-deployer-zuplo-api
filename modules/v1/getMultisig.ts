@@ -1,8 +1,8 @@
 import { ethers } from "ethers";
 import { ZuploContext, ZuploRequest, environment } from "@zuplo/runtime";
 import { createClient } from "@supabase/supabase-js";
-import verifyNetwork from "./verification/verifyNetwork";
-import getRpcURL from "./verification/getRpcURL";
+import verifyNetwork from "../verification/verifyNetwork";
+import getRpcURL from "../verification/getRpcURL";
 
 const { SUPABASE_URL, SUPABASE_PASSWORD } = environment;
 

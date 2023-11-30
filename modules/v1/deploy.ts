@@ -1,11 +1,11 @@
 import { ethers } from "ethers";
 import { ZuploContext, ZuploRequest, environment } from "@zuplo/runtime";
 import { createClient } from "@supabase/supabase-js";
-import verifyNetwork from "./verification/verifyNetwork";
-import getRpcURL from "./verification/getRpcURL";
-import getChainId from "./verification/getChainId";
-import { MultisigData } from "../const/multisig";
-import { BeaconProxyData } from "../const/beaconProxy";
+import verifyNetwork from "../verification/verifyNetwork";
+import getRpcURL from "../verification/getRpcURL";
+import getChainId from "../verification/getChainId";
+import { MultisigData } from "../../const/multisig";
+import { BeaconProxyData } from "../../const/beaconProxy";
 
 const { WALLET_PRIVATE_KEY, SUPABASE_PASSWORD, SUPABASE_URL } = environment;
 
@@ -76,7 +76,6 @@ export default async function (request: ZuploRequest, context: ZuploContext) {
   const multisigArgsData = contractFactory.interface.encodeFunctionData("initialize", constructorArgs);
   const beaconProxyData = beaconFactory.interface.encodeDeploy([addresses[chainId], multisigArgsData]);
   const data = ethers.concat([beaconFactory.bytecode, beaconProxyData]);
-  console.log("deploying with transaction data");
 
   const tx = {
     nonce: nonce,

@@ -1,9 +1,9 @@
 import { ethers } from "ethers";
 import { ZuploContext, ZuploRequest, environment } from "@zuplo/runtime";
-import verifyNetwork from "./verification/verifyNetwork";
-import getRpcURL from "./verification/getRpcURL";
-import verifyRequestLegitimityOnContract from "./verification/verifyRequestLegitimityOnContract";
-import verifyIsAnAddress from "./verification/verifyIsAnAddress";
+import verifyNetwork from "../verification/verifyNetwork";
+import getRpcURL from "../verification/getRpcURL";
+import verifyRequestLegitimityOnContract from "../verification/verifyRequestLegitimityOnContract";
+import verifyIsAnAddress from "../verification/verifyIsAnAddress";
 
 const { WALLET_PRIVATE_KEY } = environment;
 
