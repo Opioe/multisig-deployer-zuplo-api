@@ -24,7 +24,7 @@ const supabase = createClient(
 
 
 export default async function (request: ZuploRequest, context: ZuploContext) {
-  const { signers, required, network } = await request.json(); 
+  const { signers, required, network } = await request.json();
   console.log(signers)
   if (typeof signers != "object") {
     return {
@@ -63,12 +63,12 @@ export default async function (request: ZuploRequest, context: ZuploContext) {
 
   const rpcUrl = await getRpcURL(network);
   const chainId = await getChainId(network);
-    
+
   const provider = new ethers.JsonRpcProvider(rpcUrl);
   const wallet = new ethers.Wallet(WALLET_PRIVATE_KEY as string, provider);
 
   const contractFactory = new ethers.ContractFactory(MultisigData.abi, MultisigData.bytecode, wallet);
-  const beaconFactory = new ethers.ContractFactory(BeaconProxyData.abi , BeaconProxyData.bytecode, wallet);
+  const beaconFactory = new ethers.ContractFactory(BeaconProxyData.abi, BeaconProxyData.bytecode, wallet);
 
   const nonce = await wallet.getNonce();
 
@@ -95,7 +95,7 @@ export default async function (request: ZuploRequest, context: ZuploContext) {
     const { error } = await supabase
       .from("contracts")
       .insert([
-        { creation_hash: sendTxResponse.hash.toString(), address: contractAddress, network: network, chain_id: chainId, owner: request.user.data.customerId.toString() }
+        { creation_hash: sendTxResponse.hash.toString(), contract_address: contractAddress, network: network, chain_id: chainId, owner: request.user.data.customerId.toString() }
       ])
     if (error) {
       return {

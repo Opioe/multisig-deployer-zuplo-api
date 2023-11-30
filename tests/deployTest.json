@@ -6,5 +6,5 @@
     "content-type": "application/json",
     "Authorization": "Bearer"
   },
-  "body": "{\n    \"signers\" : [\"0x0c49DF4e21909375c220D2Fe6661b32481aCc258\", \"0xdDe7b5B326DE06f01b2aCf08cF38573e74ef5d68\"],\n    \"required\" : 1\n \"network\" : \"ethereum\"\n}"
+  "body": "{\n    \"signers\": [\"0xF79244be8F46E4687A7150a76bFD821e775f26bB\", \"0xe249BEc3a1FDCea562Abf1479C641106DB8421C3\",\"0x443112E22cc72020C29e8240174115bD0bdB0C4E\", \"0x93BF5828f7AFff6139E704ba58fF87128E26C1e6\"],\n    \"required\": 2,\n    \"network\": \"ethereum\"\n}"
 }
