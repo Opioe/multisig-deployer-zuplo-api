@@ -16,7 +16,7 @@
           "corsPolicy": "none",
           "handler": {
             "export": "default",
-            "module": "$import(./v1/modules/deploy)",
+            "module": "$import(./modules/v1/deploy)",
             "options": {}
           },
           "policies": {
@@ -40,7 +40,7 @@
           "corsPolicy": "none",
           "handler": {
             "export": "default",
-            "module": "$import(./v1/modules/contractAddress)",
+            "module": "$import(./modules/v1/contractAddress)",
             "options": {}
           },
           "policies": {
@@ -64,7 +64,7 @@
           "corsPolicy": "none",
           "handler": {
             "export": "default",
-            "module": "$import(./v1/modules/requestOwnership)",
+            "module": "$import(./modules/v1/requestOwnership)",
             "options": {}
           },
           "policies": {
@@ -88,7 +88,7 @@
           "corsPolicy": "none",
           "handler": {
             "export": "default",
-            "module": "$import(./v1/modules/requestSignerChange)",
+            "module": "$import(./modules/v1/requestSignerChange)",
             "options": {}
           },
           "policies": {
@@ -112,7 +112,7 @@
           "corsPolicy": "none",
           "handler": {
             "export": "default",
-            "module": "$import(./v1/modules/submitTransaction)",
+            "module": "$import(./modules/v1/submitTransaction)",
             "options": {}
           },
           "policies": {
@@ -136,7 +136,7 @@
           "corsPolicy": "none",
           "handler": {
             "export": "default",
-            "module": "$import(./v1/modules/getMultisig)",
+            "module": "$import(./modules/v1/getMultisig)",
             "options": {}
           },
           "policies": {
