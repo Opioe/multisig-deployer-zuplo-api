@@ -5,6 +5,7 @@ import verifyRequestLegitimityOnContract from "./verification/verifyRequestLegit
 import verifyIsAnAddress from "./verification/verifyIsAnAddress";
 import verifyNetwork from "./verification/verifyNetwork";
 import getRpcURL from "./verification/getRpcURL";
+import { MultisigData } from "../const/multisig";
 
 const { WALLET_PRIVATE_KEY, SUPABASE_URL, SUPABASE_PASSWORD } = environment;
 
@@ -13,29 +14,10 @@ const supabase = createClient(
   SUPABASE_PASSWORD
 );
 
-const contractABI = [
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_oldSigner",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "_newSigner",
-        "type": "address"
-      }
-    ],
-    "name": "requestSignerChange",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  }
-];
+const contractABI = MultisigData.abi;
 
 export default async function (request: ZuploRequest, context: ZuploContext) {
-  const { contractAddress, oldSigner, newSigner, network } = await request.body;
+  const { contractAddress, oldSigner, newSigner, network } = await request.json();
 
   verifyRequestLegitimityOnContract(contractAddress, request.user.data.customerId.toString());
 

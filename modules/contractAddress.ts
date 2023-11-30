@@ -41,7 +41,7 @@ export default async function (request: ZuploRequest, context: ZuploContext) {
     if (error) {
       return {
         statusCode: 503,
-        smallError: "Error while inserting the contract's data in the database",
+        smallError: "Error in the connection with the database",
         error: error,
       };
     }
@@ -55,7 +55,7 @@ export default async function (request: ZuploRequest, context: ZuploContext) {
   } catch (err) {
     return {
       statusCode: 503,
-      smallError: "Error while inserting the contract's data in the database",
+      smallError: "Error in the connection with the database",
       error: err,
     };
   }
@@ -66,51 +66,41 @@ export default async function (request: ZuploRequest, context: ZuploContext) {
   const provider = new ethers.JsonRpcProvider(rpcUrl);
 
   try {
-    const tx = await provider.getTransaction(txhash);
-    if (tx == null) {
-      return {
-        statusCode: 404,
-        error: "Transaction not mined yet",
-      };
-    }
-  } catch (error) {
-    return {
-      statusCode: 400,
-      error: "Invalid txhash",
-      errorMessage: error.message,
-    };
-  }
-
-  try {
     const receipt = await provider.getTransactionReceipt(txhash);
 
     if (receipt.contractAddress) {
-      const { error } = await supabase
+      // Vérifie si la contract_address est déjà définie dans la base de données
+      const { data: existingContract } = await supabase
         .from("contracts")
-        .upsert(
-          [
-            {
-              creation_hash: txhash,
-              contract_address: receipt.contractAddress,
-            }
-          ],
-        );
+        .select("contract_address")
+        .eq("creation_hash", txhash);
 
-      if (error) {
-        return {
-          statusCode: 503,
-          smallError: "Error while inserting the contract's data in the database",
-          error: error
-        };
+      if (!existingContract || existingContract.length === 0 || !existingContract[0].contract_address) {
+        const { error } = await supabase
+          .from("contracts")
+          .update({
+            contract_address: receipt.contractAddress,
+          })
+          .eq("creation_hash", txhash);
+
+        if (error) {
+          return {
+            statusCode: 503,
+            smallError: "Error while inserting the contract's data in the database",
+            error: error,
+          };
+        }
       }
+
       return {
         statusCode: 200,
         contractAddress: receipt.contractAddress,
-      }
+      };
     } else {
       return {
         statusCode: 404,
-        error: "No contract address found for this transaction, please verify that the transaction corresponds to a contract deployment",
+        error:
+          "No contract address found for this transaction, please verify that the transaction corresponds to a contract deployment",
       };
     }
   } catch (error) {
@@ -120,4 +110,5 @@ export default async function (request: ZuploRequest, context: ZuploContext) {
       errorMessage: error.message,
     };
   }
+
 };

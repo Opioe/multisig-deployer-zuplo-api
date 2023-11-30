@@ -1,6 +1,6 @@
 {
   "description": "A simple POST to the initial route",
-  "pathname": "/contractAddress?txhash=0x81a5ad49f3d2e3c9b39d07c235e538bed3883706b6090077f3634c604dcf9fe6",
+  "pathname": "/contractAddress?txhash=0xa69ac29e12b8e0a9e69394589da6513c2318818b49df4af9ce334c200d2efa09&network=ethereum",
   "method": "GET",
   "headers": {
     "content-type": "application/json",
