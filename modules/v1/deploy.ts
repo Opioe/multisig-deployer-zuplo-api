@@ -52,7 +52,10 @@ export default async function (request: ZuploRequest, context: ZuploContext) {
       error: "Invalid number of required, expected between 1 and the number of signers (in your request : " + signers.length + " signers)",
     };
   }
-  await verifyNetwork(network);
+  const vNetwork = await verifyNetwork(network);
+  if (vNetwork != undefined) {
+    return vNetwork;
+  }
 
   const rpcUrl = await getRpcURL(network);
   const chainId = await getChainId(network);

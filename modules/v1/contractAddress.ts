@@ -34,7 +34,10 @@ export default async function (request: ZuploRequest, context: ZuploContext) {
   }
 
   const network = await request.query.network
-  await verifyNetwork(network);
+  const vNetwork = await verifyNetwork(network);
+  if (vNetwork != undefined) {
+    return vNetwork;
+  }
   const rpcUrl = await getRpcURL(network)
   const provider = new ethers.JsonRpcProvider(rpcUrl);
 

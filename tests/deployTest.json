@@ -1,6 +1,6 @@
 {
   "description": "A simple POST to the initial route",
-  "pathname": "/deploy",
+  "pathname": "/v1/deploy",
   "method": "POST",
   "headers": {
     "content-type": "application/json",
