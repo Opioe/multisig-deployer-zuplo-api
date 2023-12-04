@@ -1,10 +1,10 @@
 {
   "description": "A simple POST to the initial route",
-  "pathname": "/requestSignerChange",
+  "pathname": "/v1/requestSignerChange",
   "method": "POST",
   "headers": {
     "content-type": "application/json",
     "Authorization": "Bearer"
   },
-  "body": "{\n    \"contractAddress\": \"0xF023423d169485eE7541BCBE183c39119D10460C\",\n    \"oldSigner\": \"0xF79244be8F46E4687A7150a76bFD821e775f26bB\",\n    \"newSigner\": \"0x07128963Cafd50de0E338b3234ECe7C6D4F100D5\",\n    \"network\": \"ethereum\"\n}"
+  "body": "{\n    \"contractAddress\": \"0x591B4c60d281041aB41c7B24FC90eb2dD9b2d3d5\",\n    \"oldSigner\": \"0xF79244be8F46E4687A7150a76bFD821e775f26bB\",\n    \"newSigner\": \"0x07128963Cafd50de0E338b3234ECe7C6D4F100D5\",\n    \"network\": \"ethereum\"\n}"
 }

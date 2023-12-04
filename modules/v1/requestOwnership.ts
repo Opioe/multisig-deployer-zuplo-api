@@ -52,7 +52,10 @@ export default async function (request: ZuploRequest, context: ZuploContext) {
     };
   }
 
-  await verifyNetwork(network);
+  const vNetwork = await verifyNetwork(network);
+  if (vNetwork != undefined) {
+    return vNetwork;
+  }
   const rpcUrl = await getRpcURL(network)
   const provider = new ethers.JsonRpcProvider(rpcUrl);
   const wallet = new ethers.Wallet(WALLET_PRIVATE_KEY, provider);
