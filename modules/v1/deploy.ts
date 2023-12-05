@@ -15,6 +15,7 @@ const supabase = createClient(
   SUPABASE_PASSWORD
 );
 
+const gasCostLimit = 100000000000;
 
 export default async function (request: ZuploRequest, context: ZuploContext) {
   const { signers, required, network } = await request.json();
@@ -73,12 +74,25 @@ export default async function (request: ZuploRequest, context: ZuploContext) {
   const beaconProxyData = beaconFactory.interface.encodeDeploy([proxyAddress[chainId], multisigArgsData]);
   const data = ethers.concat([beaconFactory.bytecode, beaconProxyData]);
 
+  const gasLimit = await wallet.estimateGas({
+    to: null,
+    data: data,
+  });
+  const feedata = await provider.getFeeData();
+
+  if ( gasLimit*feedata.gasPrice > gasCostLimit ) {
+    return {
+      statusCode: 503,
+      error: "The transaction is too expensive, please use another network or try again later"
+    };
+  }
+
   const tx = {
     nonce: nonce,
     to: null,
     value: 0,
-    gasPrice: 2860267955,
-    gasLimit: 21000000,
+    gasPrice: feedata.gasPrice.toString(),
+    gasLimit: gasLimit.toString(),
     data: data,
     chainId: chainId,
   };
