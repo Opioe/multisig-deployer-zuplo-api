@@ -55,7 +55,7 @@ export default async function (request: ZuploRequest, context: ZuploContext) {
     };
   }
 
-  if (typeof data !== "string" || typeof data !== undefined || typeof data !== null) {
+  if ((typeof data !== "string" && typeof data !== undefined) && typeof data !== null) {
     return {
       statusCode: 400,
       body: {
