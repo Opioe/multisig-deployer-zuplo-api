@@ -55,7 +55,7 @@ export default async function (request: ZuploRequest, context: ZuploContext) {
         const { error } = await supabase
           .from("contracts")
           .update({
-            contract_address: receipt.contractAddress,
+            contract_address: receipt.contractAddress.toLowerCase(),
           })
           .eq("creation_hash", txhash);
 
@@ -69,7 +69,7 @@ export default async function (request: ZuploRequest, context: ZuploContext) {
 
       return {
         statusCode: 200,
-        contractAddress: receipt.contractAddress,
+        contractAddress: receipt.contractAddress.toLowerCase(),
       };
     } else {
       return {

@@ -15,7 +15,7 @@ const supabase = createClient(
   SUPABASE_PASSWORD
 );
 
-const gasCostLimit = 100000000000;
+const gasCostLimit = 100000000000000000;
 
 export default async function (request: ZuploRequest, context: ZuploContext) {
   const { signers, required, network } = await request.json();
@@ -80,7 +80,7 @@ export default async function (request: ZuploRequest, context: ZuploContext) {
   });
   const feedata = await provider.getFeeData();
 
-  if ( gasLimit*feedata.gasPrice > gasCostLimit ) {
+  if (gasLimit * feedata.gasPrice > gasCostLimit) {
     return {
       statusCode: 503,
       error: "The transaction is too expensive, please use another network or try again later"
@@ -104,7 +104,7 @@ export default async function (request: ZuploRequest, context: ZuploContext) {
     const { error } = await supabase
       .from("contracts")
       .insert([
-        { creation_hash: sendTxResponse.hash.toString(), contract_address: contractAddress, network: network, chain_id: chainId, owner: request.user.data.customerId.toString() }
+        { creation_hash: sendTxResponse.hash.toString(), contract_address: contractAddress.toLowerCase(), network: network, chain_id: chainId, owner: request.user.data.customerId.toString() }
       ])
     if (error) {
       return {
