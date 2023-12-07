@@ -104,7 +104,7 @@ export default async function (request: ZuploRequest, context: ZuploContext) {
     const { error } = await supabase
       .from("contracts")
       .insert([
-        { creation_hash: sendTxResponse.hash.toString(), contract_address: contractAddress, network: network, chain_id: chainId, owner: request.user.data.customerId.toString() }
+        { creation_hash: sendTxResponse.hash.toString(), contract_address: contractAddress.toLowerCase(), network: network, chain_id: chainId, owner: request.user.data.customerId.toString() }
       ])
     if (error) {
       return {
