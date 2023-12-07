@@ -5,7 +5,7 @@
     "title": "My Zuplo API"
   },
   "paths": {
-    "/deploy": {
+    "/v1/deploy": {
       "x-zuplo-path": {
         "pathMode": "open-api"
       },
@@ -16,7 +16,7 @@
           "corsPolicy": "none",
           "handler": {
             "export": "default",
-            "module": "$import(./modules/deploy)",
+            "module": "$import(./modules/v1/deploy)",
             "options": {}
           },
           "policies": {
@@ -29,7 +29,7 @@
         "operationId": "e63fabdc-d80b-4ba8-9802-ba11426cf4bd"
       }
     },
-    "/contractAddress": {
+    "/v1/contractAddress": {
       "x-zuplo-path": {
         "pathMode": "open-api"
       },
@@ -40,7 +40,7 @@
           "corsPolicy": "none",
           "handler": {
             "export": "default",
-            "module": "$import(./modules/contractAddress)",
+            "module": "$import(./modules/v1/contractAddress)",
             "options": {}
           },
           "policies": {
@@ -53,7 +53,7 @@
         "operationId": "38437fbd-acd6-407b-8992-d4581ae061bd"
       }
     },
-    "/requestOwnership": {
+    "/v1/requestOwnership": {
       "x-zuplo-path": {
         "pathMode": "open-api"
       },
@@ -64,7 +64,7 @@
           "corsPolicy": "none",
           "handler": {
             "export": "default",
-            "module": "$import(./modules/requestOwnership)",
+            "module": "$import(./modules/v1/requestOwnership)",
             "options": {}
           },
           "policies": {
@@ -77,7 +77,7 @@
         "operationId": "e6df59eb-1345-4f89-be89-5a3435885734"
       }
     },
-    "/requestSignerChange": {
+    "/v1/requestSignerChange": {
       "x-zuplo-path": {
         "pathMode": "open-api"
       },
@@ -88,7 +88,7 @@
           "corsPolicy": "none",
           "handler": {
             "export": "default",
-            "module": "$import(./modules/requestSignerChange)",
+            "module": "$import(./modules/v1/requestSignerChange)",
             "options": {}
           },
           "policies": {
@@ -99,6 +99,54 @@
           }
         },
         "operationId": "0d212cee-1093-4c14-b423-74f7a5cadc71"
+      }
+    },
+    "/v1/submitTransaction": {
+      "x-zuplo-path": {
+        "pathMode": "open-api"
+      },
+      "post": {
+        "summary": "Submit Transaction By Owner",
+        "description": "Lorem ipsum dolor sit amet, **consectetur adipiscing** elit, sed do `eiusmod tempor` incididunt ut labore et dolore magna aliqua.",
+        "x-zuplo-route": {
+          "corsPolicy": "none",
+          "handler": {
+            "export": "default",
+            "module": "$import(./modules/v1/submitTransaction)",
+            "options": {}
+          },
+          "policies": {
+            "inbound": [
+              "api-key-inbound",
+              "rate-limit-inbound"
+            ]
+          }
+        },
+        "operationId": "22f21f24-8cfe-4e4b-b5df-0c11d271b623"
+      }
+    },
+    "/v1/get-multisig": {
+      "x-zuplo-path": {
+        "pathMode": "open-api"
+      },
+      "get": {
+        "summary": "get-multisig",
+        "description": "Lorem ipsum dolor sit amet, **consectetur adipiscing** elit, sed do `eiusmod tempor` incididunt ut labore et dolore magna aliqua.",
+        "x-zuplo-route": {
+          "corsPolicy": "none",
+          "handler": {
+            "export": "default",
+            "module": "$import(./modules/v1/getMultisig)",
+            "options": {}
+          },
+          "policies": {
+            "inbound": [
+              "api-key-inbound",
+              "rate-limit-inbound"
+            ]
+          }
+        },
+        "operationId": "e63fabdc-d80b-4ba8-9802-ba11426cf4bd"
       }
     }
   }

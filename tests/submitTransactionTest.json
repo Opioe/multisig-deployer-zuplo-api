@@ -1,0 +1,10 @@
+{
+  "description": "A simple POST to the initial route",
+  "pathname": "/v1/submitTransaction",
+  "method": "POST",
+  "headers": {
+    "content-type": "application/json",
+    "Authorization": "Bearer"
+  },
+  "body": "{ \n     \"destination\": \"0x58846aaB3D3E809597D20a6AaDE64aC2777411F0\",\n     \"token\": \"0x0000000000000000000000000000000000000000\", \n     \"tokenStandard\": 3, \n     \"tokenId\": 0, \n     \"value\": 4, \n     \"data\": \"0x\",\n     \"confirmTimestamp\": 0,\n     \"contractAddress\": \"0x12AB3de0680f4CAF3Ed63cA3Ac9370DD7EB85f64\", \n     \"network\": \"ethereum\"\n}"
+}
