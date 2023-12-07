@@ -17,73 +17,55 @@ const supabase = createClient(
 const contractABI = MultisigData.abi;
 
 export default async function (request: ZuploRequest, context: ZuploContext) {
+  /*
+  contractAddress : address of the contract
+  oldSigner : address of the signer to remove
+  newSigner : address of the signer to add
+  network : string of the network name (for valid values, see the verifyNetwork and getRpcURL functions)
+  */
   const { contractAddress, oldSigner, newSigner, network } = await request.json();
 
-  verifyRequestLegitimityOnContract(contractAddress, request.user.data.customerId.toString());
-
+  // Verify that the request contains a valid network
   const vNetwork = await verifyNetwork(network);
   if (vNetwork != undefined) {
     return vNetwork;
   }
+
+  // Verify that the request legimitity
+  const verifyRequestLegitimity = verifyRequestLegitimityOnContract(contractAddress, request.user.data.customerId.toString(), network);
+  if (verifyRequestLegitimity != undefined) {
+    return verifyRequestLegitimity;
+  }
+
+  // set up the transaction
   const rpcUrl = await getRpcURL(network)
   const provider = new ethers.JsonRpcProvider(rpcUrl);
   const wallet = new ethers.Wallet(WALLET_PRIVATE_KEY, provider);
   const contract = new ethers.Contract(contractAddress, contractABI, wallet);
 
-  try {
-    await contract.owner();
-  } catch (error) {
-    return {
-      statusCode: 400,
-      error: "The address " + contractAddress + " does not correspond to a MultiSigWallet smart-contract",
-      errorMessage: error.message,
-    };
-  }
+  // Verify we still are the owner of the contract
   if (await contract.owner() != wallet.address) {
     return {
       statusCode: 400,
-      error: "We are not the owner of the smart-contract at the address " + contractAddress + ". Or the smart-contract is not a MultiSigWallet."
+      error: "We are not the owner of the smart-contract at the address " + contractAddress + "."
     };
   }
 
-  try {
-    const userId = request.user.data.customerId.toString();
-    const { data, error } = await supabase
-      .from("contracts")
-      .select("contract_address")
-      .eq("contract_address", contractAddress)
-      .eq("owner", userId);
-
-    if (error) {
-      return {
-        statusCode: 503,
-        smallError: "Error while verifying the legitimacy of requesting contract's ownership. Please verify contractAddress",
-        error: error,
-      };
-    }
-    if (!data || data.length == 0) {
-      return {
-        statusCode: 403,
-        error: "You are not the person who deployed the contract. You can't request a signer change"
-      }
-    }
-  } catch (err) {
-    return {
-      statusCode: 503,
-      smallError: "Error while verifying the legitimacy of requesting contract's ownership",
-      error: err,
-    };
+  // Verify the old signer ans new signer parameters
+  const verifyO = verifyIsAnAddress(oldSigner);
+  if (verifyO != undefined) {
+    return verifyO;
   }
-
-  verifyIsAnAddress(oldSigner);
   if (oldSigner == newSigner) {
     return {
       statusCode: 400,
       error: "Old signer and new signer must be different",
     };
   }
-  verifyIsAnAddress(newSigner);
-
+  const verifyN = verifyIsAnAddress(newSigner);
+  if (verifyN != undefined) {
+    return verifyN;
+  }
   if (await contract.isSigner(newSigner)) {
     return {
       statusCode: 400,
@@ -91,6 +73,7 @@ export default async function (request: ZuploRequest, context: ZuploContext) {
     };
   }
 
+  // send the transaction and the response
   try {
     const tx = await contract.requestSignerChange(oldSigner, newSigner);
     return {

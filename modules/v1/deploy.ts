@@ -15,11 +15,17 @@ const supabase = createClient(
   SUPABASE_PASSWORD
 );
 
-const gasCostLimit = 100000000000000000;
+const gasCostLimit = 100000000000;
 
 export default async function (request: ZuploRequest, context: ZuploContext) {
+  /*
+  signers : array of Ethereum addresses
+  required : number of required signatures
+  network : string of the network name (for valid values, see the verifyNetwork, getRpcURL and getChainId functions)
+  */
   const { signers, required, network } = await request.json();
-  console.log(signers)
+
+  // Verfiy that the request contains a valid signers array
   if (typeof signers != "object") {
     return {
       statusCode: 400,
@@ -32,7 +38,6 @@ export default async function (request: ZuploRequest, context: ZuploContext) {
       error: "Invalid number of signers, expected between 2 and 10",
     };
   }
-
   for (let i = 0; i < signers.length; i++) {
     if (!ethers.isAddress(signers[i])) {
       return {
@@ -41,6 +46,7 @@ export default async function (request: ZuploRequest, context: ZuploContext) {
     }
   }
 
+  // Verify that the request contains a valid required number
   if (typeof required != "number") {
     return {
       statusCode: 400,
@@ -53,33 +59,36 @@ export default async function (request: ZuploRequest, context: ZuploContext) {
       error: "Invalid number of required, expected between 1 and the number of signers (in your request : " + signers.length + " signers)",
     };
   }
+
+  // Verify that the request contains a valid network
   const vNetwork = await verifyNetwork(network);
   if (vNetwork != undefined) {
     return vNetwork;
   }
 
+  // get the rpcUrl and the chainId corresponding to the network
   const rpcUrl = await getRpcURL(network);
   const chainId = await getChainId(network);
 
+  // set up the wallet, the contract factory and the beacon factory
   const provider = new ethers.JsonRpcProvider(rpcUrl);
   const wallet = new ethers.Wallet(WALLET_PRIVATE_KEY as string, provider);
-
   const contractFactory = new ethers.ContractFactory(MultisigData.abi, MultisigData.bytecode, wallet);
   const beaconFactory = new ethers.ContractFactory(BeaconProxyData.abi, BeaconProxyData.bytecode, wallet);
-
-  const nonce = await wallet.getNonce();
-
   const constructorArgs = [signers, required];
   const multisigArgsData = contractFactory.interface.encodeFunctionData("initialize", constructorArgs);
   const beaconProxyData = beaconFactory.interface.encodeDeploy([proxyAddress[chainId], multisigArgsData]);
   const data = ethers.concat([beaconFactory.bytecode, beaconProxyData]);
 
+  // set the nonce, the gasLimit and the gasPrice
+  const nonce = await wallet.getNonce();
   const gasLimit = await wallet.estimateGas({
     to: null,
     data: data,
   });
   const feedata = await provider.getFeeData();
 
+  // Verify that the transaction is not too expensive (to modify it : change the value of the gasCostLimit constant)
   if (gasLimit * feedata.gasPrice > gasCostLimit) {
     return {
       statusCode: 503,
@@ -87,6 +96,7 @@ export default async function (request: ZuploRequest, context: ZuploContext) {
     };
   }
 
+  // send the transaction and wait for the confirmation
   const tx = {
     nonce: nonce,
     to: null,
@@ -98,6 +108,8 @@ export default async function (request: ZuploRequest, context: ZuploContext) {
   };
   const sendTxResponse = await wallet.sendTransaction(tx);
   await sendTxResponse.wait();
+
+  // get the contract address and insert it in the database
   const transactionReceipt = await provider.getTransactionReceipt(sendTxResponse.hash);
   const contractAddress = transactionReceipt?.contractAddress;
   try {
@@ -121,6 +133,17 @@ export default async function (request: ZuploRequest, context: ZuploContext) {
     };
   }
 
+  // return the response
+  if (contractAddress != undefined) {
+    return {
+      statusCode: 200,
+      success: "Transaction sent successfully",
+      contractAddress: contractAddress.toLowerCase(),
+      sendTxResponse: sendTxResponse.hash,
+      network: network,
+      chainId: chainId,
+    };
+  }
   return {
     statusCode: 200,
     success: "Transaction sent successfully",

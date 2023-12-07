@@ -8,7 +8,7 @@ const supabase = createClient(
   SUPABASE_PASSWORD
 );
 
-async function verifyRequestLegitimityOnContract(contractAddress, userId) {
+async function verifyRequestLegitimityOnContract(contractAddress, userId, network) {
     if (typeof contractAddress != "string" || contractAddress.length != 42 || contractAddress.slice(0, 2) != "0x") {
     return {
         error: "Invalid argument type or format of contractAddress",
@@ -31,7 +31,8 @@ async function verifyRequestLegitimityOnContract(contractAddress, userId) {
         .from("contracts")
         .select("contract_address")
         .eq("contract_address", contractAddress)
-        .eq("owner", userId);
+        .eq("owner", userId)
+        .eq("network", network);
 
     if (error) {
         return {
@@ -41,7 +42,8 @@ async function verifyRequestLegitimityOnContract(contractAddress, userId) {
     }
     if (!data || data.length == 0) {
         return {
-        error: "You are not the person who deployed the contract. You can't request it's ownership"
+        error: "You are not the person who deployed the contract. You can't request it's ownership, or the contract doesn't exist",
+        hint : "If you are the owner of the contract, please verify the contractAddress and the network",
         }
     }
     } catch (err) {

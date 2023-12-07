@@ -12,6 +12,8 @@ const supabase = createClient(
 );
 
 export default async function (request: ZuploRequest, context: ZuploContext) {
+  
+  // Verify that the request contains a valid txhash
   const txhash = await request.query.txhash
   if (typeof txhash != "string" || txhash.length != 66 || txhash.slice(0, 2) != "0x") {
     return {
@@ -33,6 +35,7 @@ export default async function (request: ZuploRequest, context: ZuploContext) {
     }
   }
 
+  // Verify that the request contains a valid network
   const network = await request.query.network
   const vNetwork = await verifyNetwork(network);
   if (vNetwork != undefined) {
@@ -45,12 +48,13 @@ export default async function (request: ZuploRequest, context: ZuploContext) {
     const receipt = await provider.getTransactionReceipt(txhash);
 
     if (receipt.contractAddress) {
-      // Vérifie si la contract_address est déjà définie dans la base de données
+      // Check if the contract address is already in the database
       const { data: existingContract } = await supabase
         .from("contracts")
         .select("contract_address")
         .eq("creation_hash", txhash);
-
+      
+      // If the contract address is not in the database, add it
       if (!existingContract || existingContract.length === 0 || !existingContract[0].contract_address) {
         const { error } = await supabase
           .from("contracts")

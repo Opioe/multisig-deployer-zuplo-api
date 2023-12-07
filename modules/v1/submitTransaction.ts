@@ -13,9 +13,22 @@ const contractABI = MultisigData.abi;
 export default async function (request: ZuploRequest, context: ZuploContext) {
   var { destination, token, tokenStandard, tokenId, value, data, confirmTimestamp, contractAddress, network } = await request.json();
 
-  verifyRequestLegitimityOnContract(contractAddress, request.user.data.customerId.toString());
-  verifyIsAnAddress(destination, "destination address");
+  // Verify that the request contains a valid network
+  const vNetwork = await verifyNetwork(network);
+  if (vNetwork != undefined) {
+    return vNetwork;
+  }
 
+  const verifyRequestLegitimity = verifyRequestLegitimityOnContract(contractAddress, request.user.data.customerId.toString(), network);
+  if (verifyRequestLegitimity != undefined) {
+    return verifyRequestLegitimity;
+  }
+  const verifyD = verifyIsAnAddress(destination, "destination address");
+  if (verifyD != undefined) {
+    return verifyD;
+  }
+
+  // Verify the transaction parameters
   if (typeof tokenStandard != "number" || tokenStandard < 0 || tokenStandard > 3) {
     return {
       statusCode: 400,
@@ -88,39 +101,45 @@ export default async function (request: ZuploRequest, context: ZuploContext) {
     };
   }
 
-
-  const vNetwork = await verifyNetwork(network);
-  if (vNetwork != undefined) {
-    return vNetwork;
-  }
+  // set up the transaction
   const rpcUrl = await getRpcURL(network)
   const provider = new ethers.JsonRpcProvider(rpcUrl);
   const wallet = new ethers.Wallet(WALLET_PRIVATE_KEY, provider);
   const contract = new ethers.Contract(contractAddress, contractABI, wallet);
 
-  const transaction = await contract.submitTransactionByOwner(destination, token, tokenStandard, tokenId, value, data, confirmTimestamp);
+  // send the transaction and the response
 
-  /*
-  const { error } = await supabase.from("transactions").insert([
-      {
-          transactionId: transaction.transactionId,
-          destination: destination,
-          token: token,
-          ts: ts,
-          tokenId: tokenId,
-          value: value,
-          data: data,
-          confirmTimestamp: confirmTimestamp
-      }
-  ]);
+  try {
+    const transaction = await contract.submitTransactionByOwner(destination, token, tokenStandard, tokenId, value, data, confirmTimestamp);
 
-  if (error) {
-      console.log(error);
+    /*
+    // add the transaction to the database
+    const { error } = await supabase.from("transactions").insert([
+        {
+            transactionId: transaction.transactionId,
+            destination: destination,
+            token: token,
+            ts: ts,
+            tokenId: tokenId,
+            value: value,
+            data: data,
+            confirmTimestamp: confirmTimestamp
+        }
+    ]);
+
+    if (error) {
+        console.log(error);
+    }
+    */
+
+    return {
+      statusCode: 200,
+      transaction: transaction
+    };
+  } catch (error) {
+    return {
+      error: "Transaction reverted",
+      errorMessage: error.message,
+    };
   }
-  */
-
-  return {
-    statusCode: 200,
-    transaction: transaction
-  };
 }

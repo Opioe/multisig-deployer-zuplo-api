@@ -18,59 +18,33 @@ const supabase = createClient(
 const contractABI = MultisigData.abi;
 
 export default async function (request: ZuploRequest, context: ZuploContext) {
+  /*
+  contractAddress : address of the contract
+  futureOwner : address of the future owner
+  network : string of the network name (for valid values, see the verifyNetwork and getRpcURL functions)
+  */
   const { contractAddress, futureOwner, network } = await request.json();
 
-  verifyRequestLegitimityOnContract(contractAddress, request.user.data.customerId.toString());
-  verifyIsAnAddress(futureOwner);
-
-  try {
-    const userId = request.user.data.customerId.toString();
-    const { data, error } = await supabase
-      .from("contracts")
-      .select("contract_address")
-      .eq("contract_address", contractAddress)
-      .eq("owner", userId);
-
-    if (error) {
-      return {
-        statusCode: 503,
-        smallError: "Error while verifying the legitimacy of requesting contract's ownership. Please verify contractAddress",
-        error: error,
-      };
-    }
-    if (!data || data.length == 0) {
-      return {
-        statusCode: 403,
-        error: "You are not the person who deployed the contract or this contract is not a MultiSig deploy with the API. You can't request it's ownership"
-      }
-    }
-  } catch (err) {
-    return {
-      statusCode: 503,
-      smallError: "Error while verifying the legitimacy of requesting contract's ownership",
-      error: err,
-    };
-  }
-
+  // Verify that the request contains a valid network
   const vNetwork = await verifyNetwork(network);
   if (vNetwork != undefined) {
     return vNetwork;
   }
+
+  // Verify that the request legimitity
+  const verifyRequestLegitimity = verifyRequestLegitimityOnContract(contractAddress, request.user.data.customerId.toString(), network);
+  if (verifyRequestLegitimity != undefined) {
+    return verifyRequestLegitimity;
+  }
+  verifyIsAnAddress(futureOwner);
+
+  // set up the transaction
   const rpcUrl = await getRpcURL(network)
   const provider = new ethers.JsonRpcProvider(rpcUrl);
   const wallet = new ethers.Wallet(WALLET_PRIVATE_KEY, provider);
   const contract = new ethers.Contract(contractAddress, contractABI, wallet);
 
-  try {
-    await contract.owner();
-  } catch (error) {
-    return {
-      statusCode: 400,
-      error: "Invalid contract address",
-      errorMessage: error.message,
-    };
-  }
-
+  // Verify we still are the owner of the contract
   const verif = await contract.owner();
   if (verif != wallet.address) {
     return {
@@ -80,6 +54,7 @@ export default async function (request: ZuploRequest, context: ZuploContext) {
     };
   }
 
+  // send the transaction and the response
   try {
     const tx = await contract.transferOwnership(futureOwner);
     return {
