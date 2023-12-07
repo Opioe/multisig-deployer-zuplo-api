@@ -15,16 +15,17 @@ export default async function (request: ZuploRequest, context: ZuploContext) {
 
   // Verify that the request contains a valid network
   const vNetwork = await verifyNetwork(network);
-  if (vNetwork != undefined) {
+  if (vNetwork != true) {
     return vNetwork;
   }
 
-  const verifyRequestLegitimity = verifyRequestLegitimityOnContract(contractAddress, request.user.data.customerId.toString(), network);
-  if (verifyRequestLegitimity != undefined) {
+  const verifyRequestLegitimity = await verifyRequestLegitimityOnContract(contractAddress, request.user.data.customerId.toString(), network);
+  if (verifyRequestLegitimity != true) {
     return verifyRequestLegitimity;
   }
-  const verifyD = verifyIsAnAddress(destination, "destination address");
-  if (verifyD != undefined) {
+
+  const verifyD = await verifyIsAnAddress(destination, "destination address");
+  if (verifyD != true) {
     return verifyD;
   }
 

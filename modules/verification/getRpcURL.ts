@@ -6,11 +6,11 @@ const RPCurlMatic = 'https://attentive-convincing-pallet.matic-testnet.quiknode.
 const RPCurlETH = 'https://sepolia.infura.io/v3/' + INFURA_API_KEY;
 
 async function getRpcURL(network) {
-    if (network == "matic") {
-        return RPCurlMatic;
-    } else if (network == "ethereum") {
-        return RPCurlETH;
-    } 
+  if (network == "matic") {
+      return RPCurlMatic;
+  } else if (network == "ethereum") {
+      return RPCurlETH;
+  } 
 }
 
 export default getRpcURL;
