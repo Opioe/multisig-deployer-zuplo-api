@@ -14,17 +14,16 @@ async function verifyRequestLegitimityOnContract(contractAddress, userId) {
         error: "Invalid argument type or format of contractAddress",
     };
     } else {
-    for (let i = 2; i < 42; i++) {
-        if (contractAddress[i] < "0" || contractAddress[i] > "9") {
-        if (contractAddress[i] < "A" || contractAddress[i] > "F") {
-            if (contractAddress[i] < "a" || contractAddress[i] > "f") {
-            return {
-                error: "Invalid character at index " + i + " of contractAddress (current character at index " + i + " : \'" + contractAddress[i] + "\')",
-            };
-            }
-        }
-        }
-    }
+      contractAddress = contractAddress.toLowerCase();
+      for (let i = 2; i < 42; i++) {
+          if (contractAddress[i] < "0" || contractAddress[i] > "9") {
+              if (contractAddress[i] < "a" || contractAddress[i] > "f") {
+                return {
+                    error: "Invalid character at index " + i + " of contractAddress (current character at index " + i + " : \'" + contractAddress[i] + "\')",
+                };
+              }
+          }
+      }
     }
 
     try {

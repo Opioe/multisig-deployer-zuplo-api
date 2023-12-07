@@ -1,10 +1,10 @@
 {
   "description": "A simple POST to the initial route",
-  "pathname": "/requestOwnership",
+  "pathname": "/v1/requestOwnership",
   "method": "POST",
   "headers": {
     "content-type": "application/json",
     "Authorization": "Bearer"
   },
-  "body": "{\n    \"futureOwner\" : \"0x07128963Cafd50de0E338b3234ECe7C6D4F100D5\",\n    \"contractAddress\" : \"0xe8B8cC400653143883FBfD55989b2D56BF7B29B8\"\n}"
+  "body": "{\n    \"futureOwner\" : \"0x07128963Cafd50de0E338b3234ECe7C6D4F100D5\",\n    \"contractAddress\" : \"0xE6Cf35d4d5f9BE73c15741AeCeec1031b2cF4F29\",\n    \"network\" : \"ethereum\"\n}"
 }

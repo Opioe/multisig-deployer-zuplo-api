@@ -1,66 +1,17 @@
 import { ethers } from "ethers";
 import { ZuploContext, ZuploRequest, environment } from "@zuplo/runtime";
-import verifyNetwork from "./verification/verifyNetwork";
-import getRpcURL from "./verification/getRpcURL";
-import verifyRequestLegitimityOnContract from "./verification/verifyRequestLegitimityOnContract";
-import verifyIsAnAddress from "./verification/verifyIsAnAddress";
+import verifyNetwork from "../verification/verifyNetwork";
+import getRpcURL from "../verification/getRpcURL";
+import verifyRequestLegitimityOnContract from "../verification/verifyRequestLegitimityOnContract";
+import verifyIsAnAddress from "../verification/verifyIsAnAddress";
+import { MultisigData } from "../../const/multisig";
 
 const { WALLET_PRIVATE_KEY } = environment;
 
-const contractABI = [
-  {
-    "inputs": [
-      {
-        "internalType": "address payable",
-        "name": "destination",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "token",
-        "type": "address"
-      },
-      {
-        "internalType": "enum MultiSigWallet.TokenStandard",
-        "name": "ts",
-        "type": "uint8"
-      },
-      {
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "value",
-        "type": "uint256"
-      },
-      {
-        "internalType": "bytes",
-        "name": "data",
-        "type": "bytes"
-      },
-      {
-        "internalType": "uint256",
-        "name": "confirmTimestamp",
-        "type": "uint256"
-      }
-    ],
-    "name": "submitTransactionByOwner",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "transactionId",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  }
-];
+const contractABI = MultisigData.abi;
 
 export default async function (request: ZuploRequest, context: ZuploContext) {
-  var { destination, token, tokenStandard, tokenId, value, data, confirmTimestamp, contractAddress, network } = request.body;
+  var { destination, token, tokenStandard, tokenId, value, data, confirmTimestamp, contractAddress, network } = await request.json();
 
   verifyRequestLegitimityOnContract(contractAddress, request.user.data.customerId.toString());
   verifyIsAnAddress(destination, "destination address");
@@ -103,7 +54,8 @@ export default async function (request: ZuploRequest, context: ZuploContext) {
       }
     };
   }
-  if (typeof data !== "string" || typeof data !== undefined || typeof data !== null) {
+
+  if ((typeof data !== "string" && typeof data !== undefined) && typeof data !== null) {
     return {
       statusCode: 400,
       body: {
@@ -137,7 +89,10 @@ export default async function (request: ZuploRequest, context: ZuploContext) {
   }
 
 
-  await verifyNetwork(network);
+  const vNetwork = await verifyNetwork(network);
+  if (vNetwork != undefined) {
+    return vNetwork;
+  }
   const rpcUrl = await getRpcURL(network)
   const provider = new ethers.JsonRpcProvider(rpcUrl);
   const wallet = new ethers.Wallet(WALLET_PRIVATE_KEY, provider);
