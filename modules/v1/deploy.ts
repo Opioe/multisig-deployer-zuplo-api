@@ -15,7 +15,7 @@ const supabase = createClient(
   SUPABASE_PASSWORD
 );
 
-const gasCostLimit = 100000000000;
+const gasCostLimit = 100000000000000000;
 
 export default async function (request: ZuploRequest, context: ZuploContext) {
   /*

@@ -27,13 +27,13 @@ export default async function (request: ZuploRequest, context: ZuploContext) {
 
   // Verify that the request contains a valid network
   const vNetwork = await verifyNetwork(network);
-  if (vNetwork != undefined) {
+  if (vNetwork != true) {
     return vNetwork;
   }
 
   // Verify that the request legimitity
-  const verifyRequestLegitimity = verifyRequestLegitimityOnContract(contractAddress, request.user.data.customerId.toString(), network);
-  if (verifyRequestLegitimity != undefined) {
+  const verifyRequestLegitimity = await verifyRequestLegitimityOnContract(contractAddress, request.user.data.customerId.toString(), network);
+  if (verifyRequestLegitimity != true) {
     return verifyRequestLegitimity;
   }
 
@@ -52,8 +52,8 @@ export default async function (request: ZuploRequest, context: ZuploContext) {
   }
 
   // Verify the old signer ans new signer parameters
-  const verifyO = verifyIsAnAddress(oldSigner);
-  if (verifyO != undefined) {
+  const verifyO = await verifyIsAnAddress(oldSigner);
+  if (verifyO != true) {
     return verifyO;
   }
   if (oldSigner == newSigner) {
@@ -62,8 +62,8 @@ export default async function (request: ZuploRequest, context: ZuploContext) {
       error: "Old signer and new signer must be different",
     };
   }
-  const verifyN = verifyIsAnAddress(newSigner);
-  if (verifyN != undefined) {
+  const verifyN = await verifyIsAnAddress(newSigner);
+  if (verifyN != true) {
     return verifyN;
   }
   if (await contract.isSigner(newSigner)) {

@@ -6,5 +6,5 @@
     "content-type": "application/json",
     "Authorization": "Bearer"
   },
-  "body": "{\n    \"contractAddress\": \"0xE6Cf35d4d5f9BE73c15741AeCeec1031b2cF4F29\",\n    \"oldSigner\": \"0xF79244be8F46E4687A7150a76bFD821e775f26bB\",\n    \"newSigner\": \"0x07128963Cafd50de0E338b3234ECe7C6D4F100D5\",\n    \"network\": \"ethereum\"\n}"
+  "body": "{\n    \"contractAddress\": \"0x901eb925c02b10d9713edb4d2f834153f64ef210\",\n    \"oldSigner\": \"0xF79244be8F46E4687A7150a76bFD821e775f26bB\",\n    \"newSigner\": \"0x07128963Cafd50de0E338b3234ECe7C6D4F100D5\",\n    \"network\": \"ethereum\"\n}"
 }

@@ -6,5 +6,5 @@
     "content-type": "application/json",
     "Authorization": "Bearer"
   },
-  "body": "{ \n     \"destination\": \"0x58846aaB3D3E809597D20a6AaDE64aC2777411F0\",\n     \"token\": \"0x0000000000000000000000000000000000000000\", \n     \"tokenStandard\": 3, \n     \"tokenId\": 0, \n     \"value\": 4, \n     \"data\": \"0x\",\n     \"confirmTimestamp\": 0,\n     \"contractAddress\": \"0x12AB3de0680f4CAF3Ed63cA3Ac9370DD7EB85f64\", \n     \"network\": \"ethereum\"\n}"
+  "body": "{ \n     \"destination\": \"0x58846aaB3D3E809597D20a6AaDE64aC2777411F0\",\n     \"token\": \"0x0000000000000000000000000000000000000000\", \n     \"tokenStandard\": 3, \n     \"tokenId\": 0, \n     \"value\": 4, \n     \"data\": \"0x\",\n     \"confirmTimestamp\": 0,\n     \"contractAddress\": \"0x901eb925c02b10d9713edb4d2f834153f64ef210\", \n     \"network\": \"ethereum\"\n}"
 }
